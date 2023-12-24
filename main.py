@@ -7,6 +7,7 @@ import aiohttp
 import asyncio
 from utils import *
 import streamlit as st
+import os
 from os import listdir
 from os.path import isfile, join
 
@@ -42,6 +43,11 @@ def main(url):
 
 
 if __name__ == '__main__':
+    st.write(os.getcwd())
+    
+    if not os.path.isdir("data"):
+        os.mkdir("data")
+
     url = st.text_input('Введите url')
     if "https://www.labirint.ru/" in url:
         st.button('Начать парсинг', on_click=main, args=(url,))
