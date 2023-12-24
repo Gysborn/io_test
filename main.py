@@ -49,11 +49,12 @@ if __name__ == '__main__':
         st.write("Некорректный url адресс")
 
     names = [f for f in listdir('data') if isfile(join('data', f))]
-    for name in names:
-        with open(f"data/{name}", "rb") as file:
-            btn = st.download_button(
-                    label=f"Download {name}",
-                    data=file,
-                    file_name=name,
-                    mime="application/json"
-                )
+    if names:
+        for name in names:
+            with open(f"data/{name}", "rb") as file:
+                btn = st.download_button(
+                        label=f"Download {name}",
+                        data=file,
+                        file_name=name,
+                        mime="application/json"
+                    )
