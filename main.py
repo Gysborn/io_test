@@ -1,7 +1,6 @@
 import json
 from bs4 import BeautifulSoup
 import datetime
-import csv
 from config import *
 import aiohttp
 import asyncio
