@@ -41,10 +41,10 @@ def main(url):
     with open(f"data/labirint_{cur_time}_async.json", "w", encoding='utf-8') as file:
         json.dump(books_data, file, indent=4, ensure_ascii=False)
 
-
 if __name__ == '__main__':
+
     st.write(os.getcwd())
-    
+
     if not os.path.isdir("data"):
         os.mkdir("data")
 
@@ -64,3 +64,4 @@ if __name__ == '__main__':
                         file_name=name,
                         mime="application/json"
                     )
+                st.button(f'Delete {name}', on_click=os.remove, args=(f"data/{name}",))
