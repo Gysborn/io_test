@@ -42,9 +42,6 @@ def main(url):
         json.dump(books_data, file, indent=4, ensure_ascii=False)
 
 if __name__ == '__main__':
-
-    st.write(os.getcwd())
-
     if not os.path.isdir("data"):
         os.mkdir("data")
 
