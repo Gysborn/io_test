@@ -1,8 +1,11 @@
+import re
 from bs4 import BeautifulSoup
 from config import *
 import datetime
 import json
 import csv
+import pandas as pd
+from openpyxl.workbook import Workbook
 
 
 def core(soup_obj):
@@ -28,7 +31,7 @@ def core(soup_obj):
             {
             "book_title": title,
             "book_genre": genre,
-            "book_author": book_authors,
+            "book_authors": book_authors,
             "book_publishing": publisher,
             "book_new_price": new_price,
             "book_old_price": old_price,
@@ -37,13 +40,11 @@ def core(soup_obj):
           }
         )
 
-def writer_result():
+def writer_csv():
     cur_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M")
+    path = f"labirint_{cur_time}_.csv"
 
-    with open(f"labirint_{cur_time}_async.json", "w") as file:
-        json.dump(books_data, file, indent=4, ensure_ascii=False)
-
-    with open(f"labirint_{cur_time}_async.csv", "w") as file:
+    with open(f"data/{path}", "w") as file:
         writer = csv.writer(file)
 
         writer.writerow(
@@ -60,7 +61,7 @@ def writer_result():
         )
 
     for book in books_data:
-        with open(f"labirint_{cur_time}_async.csv", "a") as file:
+        with open(f"data/{path}", "a") as file:
             writer = csv.writer(file)
 
             writer.writerow(
@@ -75,3 +76,26 @@ def writer_result():
                     book["book_link"]
                 )
             )
+
+    return path
+
+def writer_json():
+    cur_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M")
+    path = f"labirint_{cur_time}_.json"
+
+    with open(f"data/{path}", "w", encoding='utf-8') as file:
+        json.dump(books_data, file, indent=4, ensure_ascii=False)
+    return path
+
+
+def writer_excel():
+    cur_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M")
+    path = f"labirint_{cur_time}_.xlsx"
+    path_js = writer_json()
+    pd.read_json(f"data/{path_js}").to_excel(f"data/{path}")
+    return path
+
+
+# p = 'labirint_25_12_2023_22_03_.json'
+
+# pd.read_json(f"data/{p}").to_excel("data/labirint.xlsx")

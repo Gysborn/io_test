@@ -1,5 +1,6 @@
 import imp
 import json
+import re
 from bs4 import BeautifulSoup
 import datetime
 from config import *
@@ -10,6 +11,35 @@ import streamlit as st
 import os
 from os import listdir
 from os.path import isfile, join
+import time
+
+st.set_page_config(
+    page_title='Parsing book store',
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+    'Get Help': 'https://www.extremelycoolapp.com/help',
+    'Report a bug': "https://www.extremelycoolapp.com/bug",
+    'About': "# This is a header. This is an *extremely* cool app!"})
+
+placeholder = st.empty()
+# placeholder1 = st.empty()
+
+
+def cs_sidebar():
+    st.sidebar.header('Парсим www.labirint.ru/')
+    output_file = st.sidebar.radio(
+    "Choice output file",
+    [":rainbow[.json]", ":rainbow[.csv]", ":rainbow[.excel]"],
+    index=None,
+    )
+
+    st.write("*You selected*:", output_file)
+    if output_file:
+        return output_file
+    else:
+        return 'Файл не выбран'
+
 
 
 async def get_page_data(session, page, total):
@@ -18,7 +48,11 @@ async def get_page_data(session, page, total):
         response_text = await response.text()
 
         core(response_text)
-        st.write(f"[INFO] Обработал страницу {page}/{total}")
+        # with st.empty():
+        #     placeholder1.progress(page, 'Working ...')
+
+        with st.empty():
+            placeholder.info(f"Обрабатывается {page}/{total} ⏳", icon="ℹ️")
 
 
 async def gather_data(st_url):
@@ -34,31 +68,48 @@ async def gather_data(st_url):
 
         await asyncio.gather(*tasks)
 
-def main(url):
-    asyncio.run(gather_data(url))
-    cur_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M")
+def display_file(path):
+    with open(f"data/{path}", "rb") as file:
+        st.sidebar.download_button(
+                label=f"Download {path}",
+                data=file,
+                file_name=path,
+                mime="application/json"
+            )
 
-    with open(f"data/labirint_{cur_time}_async.json", "w", encoding='utf-8') as file:
-        json.dump(books_data, file, indent=4, ensure_ascii=False)
+def main(url, f):
+    if not f:
+        st.error('***Не выбран файл! Слева выберите в каком форамате вернуть данные***')
+        return None
+    asyncio.run(gather_data(url))
+
+    if f == ':rainbow[.json]':
+        display_file(writer_json())
+        st.success("Success!")
+        return None
+
+    if f == ':rainbow[.csv]':
+        display_file(writer_csv())
+        st.success("Success!")
+        return None
+
+    if f == ':rainbow[.excel]':
+        display_file(writer_excel())
+        st.success("Success!")
+        return None
+
+    else:
+        st.sidebar.error(f)
+
 
 if __name__ == '__main__':
+    f = cs_sidebar()
     if not os.path.isdir("data"):
         os.mkdir("data")
 
     url = st.text_input('Введите url')
     if "https://www.labirint.ru/" in url:
-        st.button('Начать парсинг', on_click=main, args=(url,))
+        st.button('Начать парсинг', on_click=main, args=(url, f,))
     else:
-        st.write("Некорректный url адресс")
-
-    names = [f for f in listdir('data') if isfile(join('data', f))]
-    if names:
-        for name in names:
-            with open(f"data/{name}", "rb") as file:
-                btn = st.download_button(
-                        label=f"Download {name}",
-                        data=file,
-                        file_name=name,
-                        mime="application/json"
-                    )
-                st.button(f'Delete {name}', on_click=os.remove, args=(f"data/{name}",))
+        st.button('Начать парсинг', disabled=True)
+        st.error("Не корректный url адрес! На сайте магазина выберите нужную котегорию скопируйте и вставте в поле выше...")
