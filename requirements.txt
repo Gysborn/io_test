@@ -27,7 +27,7 @@ mdurl==0.1.2
 multidict==6.0.4
 openpyxl==3.1.2
 packaging==23.2
-pandas==2.1.4
+pandas~=2
 Pillow==10.1.0
 protobuf==4.25.1
 pyarrow==14.0.2
