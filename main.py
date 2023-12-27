@@ -9,12 +9,8 @@ import asyncio
 from utils import *
 import streamlit as st
 import os
-from os import listdir
-from os.path import isfile, join
 import time
 import streamlit.components.v1 as components
-
-# bootstrap 4 collapse example
 
 
 st.set_page_config(
@@ -27,7 +23,6 @@ st.set_page_config(
     'About': "# This is a header. This is an *extremely* cool app!"})
 
 placeholder = st.empty()
-# placeholder1 = st.empty()
 
 # components.html(
 #     """
@@ -57,7 +52,7 @@ def cs_sidebar():
     if output_file:
         return output_file
     else:
-        return 'Файл не выбран'
+        return None
 
 
 
@@ -100,10 +95,8 @@ def display_file(path):
             )
 
 def main(url, f):
-    if not f:
-        st.error('***Не выбран файл! Слева выберите в каком форамате вернуть данные***')
-        return None
     asyncio.run(gather_data(url))
+    placeholder.empty()
 
     if f == ':rainbow[.json]':
         display_file(writer_json())
@@ -134,7 +127,11 @@ if __name__ == '__main__':
 
     url = st.text_input('Введите url')
     if "https://www.labirint.ru/" in url:
-        st.button('Начать парсинг', on_click=main, args=(url, f,))
+        if f:
+            st.button('Начать парсинг', on_click=main, args=(url, f))
+        else:
+            st.button('Файл не выбран', disabled=True)
+            st.error('***Не выбран файл! На боковой панели выберите тип файла***')
     else:
         st.button('Начать парсинг', disabled=True)
         st.error("Не корректный url адрес! На сайте магазина выберите нужную котегорию скопируйте и вставте в поле выше...")
