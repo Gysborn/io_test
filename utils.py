@@ -11,10 +11,17 @@ from openpyxl.workbook import Workbook
 def core(soup_obj):
     soup = BeautifulSoup(soup_obj, "lxml")
     books_items = soup.find_all("div", class_="genres-carousel__item")
+    if not books_items:
+        return None
 
     for book in books_items:
         book_data = book.next.next
-        price = book_data.find_next("div", class_="price")  # скидка
+        try:
+            price = book_data.find_next("div", class_="price")  # скидка
+        except:
+            discount_percent = 'Скидка не предусмотрена'
+        else:
+            discount_percent = price.next.next.get("title", None)
         title = book_data.get("data-name", None)
         genre = book_data.get("data-maingenre-name", None)
         publisher = book_data.get("data-pubhouse", None)
@@ -22,10 +29,13 @@ def core(soup_obj):
         publisher += f" серия: {series}"
         new_price = book_data.get("data-discount-price", None)
         old_price = book_data.get("data-price", None)
-        discount_percent = price.next.next.get("title", None)
-        link = "https://www.labirint.ru" + book_data.find("a", class_="product-title-link").get("href")
-        book_authors = book.find_next("div", class_="product-author").find_all('a')  # авторы
-        book_authors = ', '.join([author.get("title", None) for author in book_authors])
+        link = "https://www.labirint.ru" + book_data.find("a", class_="product-title-link").get("href", None)
+        try:
+            book_authors = book.find_next("div", class_="product-author").find_all('a')  # авторы
+        except:
+            book_authors = "Автор не указан"
+        else:
+            book_authors = ', '.join([author.get("title", None) for author in book_authors])
 
         books_data.append(
             {

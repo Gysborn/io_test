@@ -12,6 +12,10 @@ import os
 from os import listdir
 from os.path import isfile, join
 import time
+import streamlit.components.v1 as components
+
+# bootstrap 4 collapse example
+
 
 st.set_page_config(
     page_title='Parsing book store',
@@ -25,6 +29,21 @@ st.set_page_config(
 placeholder = st.empty()
 # placeholder1 = st.empty()
 
+# components.html(
+#     """
+#     <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+
+#     <dotlottie-player src="https://lottie.host/66e68f1f-919f-4181-b6a4-f14b12154b47/oNJ5ckUIaI.json" background="transparent" speed="1" style="width: 130px; height: 130px;" loop autoplay></dotlottie-player>
+#     """
+# )
+def crone():
+    components.html(
+        """
+        <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+
+        <dotlottie-player src="https://lottie.host/89f16483-5a56-4664-89fb-873fd4ca5659/F9ZeJR4OUe.json" background="transparent" speed="1" style="width: 150px; height: 150px;" loop autoplay></dotlottie-player>
+        """
+    )
 
 def cs_sidebar():
     st.sidebar.header('Парсим www.labirint.ru/')
@@ -58,6 +77,9 @@ async def get_page_data(session, page, total):
 async def gather_data(st_url):
     async with aiohttp.ClientSession(headers=headers) as session:
         response = await session.get(url=st_url)
+        if response.status != 200:
+            st.error('Сайт отклонил запрос')
+            return None
         soup = BeautifulSoup(await response.text(), "lxml")
         pages_count = int(soup.find("div", class_="pagination-numbers").find_all("a")[-1].text) # type: ignore
 
@@ -85,16 +107,19 @@ def main(url, f):
 
     if f == ':rainbow[.json]':
         display_file(writer_json())
+        crone()
         st.success("Success!")
         return None
 
     if f == ':rainbow[.csv]':
         display_file(writer_csv())
+        crone()
         st.success("Success!")
         return None
 
     if f == ':rainbow[.excel]':
         display_file(writer_excel())
+        crone()
         st.success("Success!")
         return None
 
