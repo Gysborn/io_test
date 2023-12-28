@@ -121,10 +121,13 @@ if __name__ == '__main__':
 
     url = st.text_input('Введите url')
     if url == 'data':
+        st.write('url')
         names = get_names_files()
+        if not names:
+            st.info('Файлы отсутствуют')
         for name in names:
             st.button(f'Delete {name}', on_click=os.remove, args=(f'data/{name}',))
-            
+
     if "https://www.labirint.ru/" in url:
         if f:
             st.button('Начать парсинг', on_click=main, args=(url, f))
