@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-import datetime
 from config import *
 import aiohttp
 import asyncio
@@ -20,13 +19,6 @@ st.set_page_config(
 
 placeholder = st.empty()
 
-# components.html(
-#     """
-#     <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
-
-#     <dotlottie-player src="https://lottie.host/66e68f1f-919f-4181-b6a4-f14b12154b47/oNJ5ckUIaI.json" background="transparent" speed="1" style="width: 130px; height: 130px;" loop autoplay></dotlottie-player>
-#     """
-# )
 def crone():
     components.html(
         """
