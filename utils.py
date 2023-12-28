@@ -1,4 +1,3 @@
-import re
 from bs4 import BeautifulSoup
 from config import *
 import datetime
@@ -6,6 +5,7 @@ import json
 import csv
 import pandas as pd
 from openpyxl.workbook import Workbook
+from os import listdir
 
 
 def core(soup_obj):
@@ -109,3 +109,7 @@ def writer_excel():
 # p = 'labirint_25_12_2023_22_03_.json'
 
 # pd.read_json(f"data/{p}").to_excel("data/labirint.xlsx")
+def get_names_files():
+    from os.path import isfile, join
+    names = [f for f in listdir('data') if isfile(join('data', f))]
+    return names

@@ -1,6 +1,3 @@
-import imp
-import json
-import re
 from bs4 import BeautifulSoup
 import datetime
 from config import *
@@ -9,7 +6,6 @@ import asyncio
 from utils import *
 import streamlit as st
 import os
-import time
 import streamlit.components.v1 as components
 
 
@@ -55,12 +51,10 @@ def cs_sidebar():
         return None
 
 
-
 async def get_page_data(session, page, total):
     url_page = url + f'&page={page}'
     async with session.get(url=url_page) as response:
         response_text = await response.text()
-
         core(response_text)
         # with st.empty():
         #     placeholder1.progress(page, 'Working ...')
@@ -126,6 +120,11 @@ if __name__ == '__main__':
         os.mkdir("data")
 
     url = st.text_input('Введите url')
+    if url == 'data':
+        names = get_names_files()
+        for name in names:
+            st.button(f'Delete {name}', on_click=os.remove, args=(f'data/{name}',))
+            
     if "https://www.labirint.ru/" in url:
         if f:
             st.button('Начать парсинг', on_click=main, args=(url, f))
